@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
+import javax.transaction.Transactional
 import javax.validation.Valid
 
 @RestController
@@ -25,6 +26,7 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PostMapping
+    @Transactional
     fun insert(@RequestBody @Valid form: NovoTopicoForm,
                uriBuilder: UriComponentsBuilder
                ): ResponseEntity<TopicoView> {
@@ -34,6 +36,7 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PutMapping
+    @Transactional
     fun update(@RequestBody @Valid form: AtualizacaoForm): ResponseEntity<TopicoView> {
         val topicoAtualizado = service.atualizar(form)
         return ResponseEntity.ok().body(topicoAtualizado)
@@ -41,6 +44,7 @@ class TopicoController(private val service: TopicoService) {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     fun delete(@PathVariable id: Long) {
         service.deletar(id)
     }

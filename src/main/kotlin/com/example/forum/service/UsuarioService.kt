@@ -1,26 +1,16 @@
 package com.example.forum.service
 
 import com.example.forum.model.Usuario
+import com.example.forum.repository.UsuarioRepository
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class UsuarioService(
-    var autores: List<Usuario>
+    private val usuarioRepository: UsuarioRepository
 ) {
 
-    init {
-        val autor = Usuario(
-            id = 1,
-            nome = "Renan",
-            email = "renan@email.com"
-        )
-        autores = Arrays.asList(autor)
-    }
-
     fun getBy(id: Long): Usuario{
-        return autores.stream().filter { autor ->
-            autor.id == id
-        }.findFirst().get()
+        return usuarioRepository.findById(id).get()
     }
 }
