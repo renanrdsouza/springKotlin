@@ -1,13 +1,15 @@
 package com.example.forum.service
 
+import com.example.forum.dto.AtualizacaoForm
 import com.example.forum.dto.NovoTopicoForm
 import com.example.forum.dto.TopicoView
 import com.example.forum.mapper.TopicoFormMapper
 import com.example.forum.mapper.TopicoViewMapper
 import com.example.forum.model.Topico
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.net.URI
 import java.util.stream.Collectors
-import kotlin.collections.ArrayList
 
 @Service
 class TopicoService(
@@ -32,9 +34,35 @@ class TopicoService(
         return topicoViewMapper.map(topico)
     }
 
-    fun cadastrar(form: NovoTopicoForm) {
+    fun cadastrar(form: NovoTopicoForm): TopicoView {
         val topico = topicoFormMapper.map(form)
         topico.id = topicos.size.toLong() + 1
         topicos = topicos.plus(topico)
+        return topicoViewMapper.map(topico)
+    }
+
+    fun atualizar(form: AtualizacaoForm): TopicoView {
+        val topico = topicos.stream().filter {
+            it.id == form.id
+        }.findFirst().get()
+        val topicoAtualizado = Topico(
+            id = form.id,
+            titulo = form.titulo,
+            mensagem = form.mensagem,
+            autor = topico.autor,
+            curso = topico.curso,
+            respostas = topico.respostas,
+            status = topico.status,
+            dataCriacao = topico.dataCriacao
+        )
+        topicos = topicos.minus(topico).plus(topicoAtualizado)
+        return topicoViewMapper.map(topicoAtualizado)
+    }
+
+    fun deletar(id: Long) {
+        val topico = topicos.stream().filter {
+            it.id == id
+        }.findFirst().get()
+        topicos = topicos.minus(topico)
     }
 }
